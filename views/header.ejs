@@ -1,0 +1,48 @@
+<div>
+<nav class="navbar navbar-expand-lg navbar-light sticky-top" style="background-color: #e3f2fd;">
+<a class="navbar-brand" href="/"><i class="fa-solid fa-cloud-bolt"></i> Thunders</a>
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  <span class="navbar-toggler-icon"></span>
+</button>
+
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+  <ul class="navbar-nav mr-auto">
+    <li class="nav-item <%= (page=='view')?'active':'' %>">
+      <a class="nav-link" href="/view">Activity</a>
+    </li>
+    <li class="nav-item <%= (page=='add')?'active':'' %>">
+      <a class="nav-link" href="/add">Team</a>
+    </li>
+    <li class="nav-item <%= (page=='analyze')?'active':'' %>">
+      <a class="nav-link" href="/analyze">Analyze</a>
+    </li>
+    
+  </ul>
+  <div class="form-inline my-2 my-lg-0">
+      <a class="btn btn-dark my-2 my-sm-0" href="/profile"><i class="fa-solid fa-user"></i></a>
+    &nbsp;&nbsp;
+    <button class="btn btn-outline-danger my-2 my-sm-0" onclick="open_LogoutModal()"><i class="fa-solid fa-power-off"></i></button>
+  </div>
+</div>
+</nav>
+<div class="modal" id="logoutModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Logout</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure ?</p>
+      </div>
+      <div class="modal-footer">
+        <a type="button" class="btn btn-primary" href="/logout">Yes logout</a>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script src="scripts/header.js"></script>

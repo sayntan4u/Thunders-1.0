@@ -1,0 +1,7 @@
+.active{
+    font-weight: bold;
+}
+
+.table-bordered td,.table-bordered th{
+    border: 1px solid black !important;
+}
