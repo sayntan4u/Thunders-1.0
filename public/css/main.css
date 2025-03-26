@@ -2,6 +2,10 @@
     font-weight: bold;
 }
 
+.active a{
+    color:#454d55 !important;
+}
+
 .table-bordered td,.table-bordered th{
     border: 1px solid black !important;
 }
