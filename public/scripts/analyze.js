@@ -59,6 +59,52 @@ document.getElementsByClassName("totalInviDone")[0].innerHTML = totalInviDone;
 document.getElementsByClassName("totalInviTarget")[0].innerHTML = totalInviTarget;
 document.getElementsByClassName("totalPlanDone")[0].innerHTML = totalPlanDone;
 document.getElementsByClassName("totalPendingPlans")[0].innerHTML = totalPendingPlans;
+
+//Analyze Data
+
+var wkFrom = document.getElementById("inputWeekFrom").value;
+var wkTo = document.getElementById("inputWeekTo").value;
+
+const weekCount = wkTo - wkFrom + 1;
+
+$("#networkingPerWeek").html(totalNetworkingDone/weekCount);
+$("#infoPerWeek").html(totalInfosDone/weekCount);
+$("#reinfoPerWeek").html(totalReinfosDone/weekCount);
+$("#inviPerWeek").html(totalInviDone/weekCount);
+$("#planPerWeek").html(totalPlanDone/weekCount);
+
+//other ratios
+
+// 
+$("#networkingToPlan").html(round(totalNetworkingDone/totalPlanDone),2);
+$("#infoToPlan").html(round(totalInfosDone/totalPlanDone),2);
+$("#inviToPlan").html(round(totalInviDone/totalPlanDone),2);
+
+//Conversion percentage
+var perc = ((totalNetworkingDone-totalInfosDone)/totalNetworkingDone)*100;
+
+if(perc > 0){
+    $("#networkingToInfo").html(round(perc,2) + "%");
+}else{
+    $("#networkingToInfo").html("Not Applicable");
+}
+
+perc = ((totalInfosDone-totalReinfosDone)/totalInfosDone)*100;
+
+if(perc > 0){
+    $("#infoToReinfo").html(round(perc,2) + "%");
+}else{
+    $("#infoToReinfo").html("Not Applicable");
+}
+
+perc = ((totalReinfosDone-totalInviDone)/totalReinfosDone)*100;
+
+if(perc > 0){
+    $("#reinfoToInvi").html(round(perc,2) + "%");
+}else{
+    $("#reinfoToInvi").html("Not Applicable");
+}
+
 }
 
 function getData(){
@@ -129,6 +175,11 @@ function getData(){
     xhttp.setRequestHeader('Content-Type', 'application/json'); 
     xhttp.send(JSON.stringify(data));
     // $('.alert').addClass("show");
+}
+
+function round(value, precision) {
+    var multiplier = Math.pow(10, precision || 0);
+    return Math.round(value * multiplier) / multiplier;
 }
 
 $("#searchBtn").click(function(){
