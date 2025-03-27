@@ -5,6 +5,7 @@ function addPerson(){
     xhttp.open("POST", "/addUser");
     xhttp.setRequestHeader('Content-Type', 'application/json'); 
     xhttp.send(JSON.stringify(data));
+    loadNames();
     $('.alert').addClass("show");
 }
 
@@ -18,7 +19,7 @@ function loadNames(){
     xhttp.onload = function() {
 
         const response = JSON.parse(this.responseText);
-        
+        $(".names").html("");
         for(let i = 0; i < response.length; i++){
             $(".names").append(`
             <tr>
