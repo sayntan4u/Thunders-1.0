@@ -7,6 +7,7 @@ function addPerson(){
     xhttp.send(JSON.stringify(data));
     loadNames();
     $('.alert').addClass("show");
+    setTimeout(function(){$('.alert').removeClass("show");},2000);
 }
 
 $(".close").click(function(){
