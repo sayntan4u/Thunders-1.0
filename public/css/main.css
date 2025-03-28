@@ -9,3 +9,7 @@
 .table-bordered td,.table-bordered th{
     border: 1px solid black !important;
 }
+
+.hide{
+    visibility: hidden;
+}

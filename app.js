@@ -1,6 +1,17 @@
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
+// const { PDFNet } = require('@pdftron/pdfnet-node');
+
+// Load our library that generates the document
+const Docxtemplater = require("docxtemplater");
+// Load PizZip library to load the docx/pptx/xlsx file in memory
+const PizZip = require("pizzip");
+const fs = require("fs");
+
+// const docxtopdf = require('docx-pdf');
+
+
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -160,6 +171,33 @@ app.post("/analyzeData",requireAuth, async (req,res) => {
   }
 });
 
+app.post("/generateLegalDoc",requireAuth, async (req,res) => {
+  try{
+
+  const outputFiles = createLegalDocumentAndDeclaration(
+    req.body.prospectName,
+    req.body.prospectAddress,
+    req.body.irID,
+    req.body.amt,
+    req.body.amtWords,
+    req.body.bankName,
+    req.body.bankAcc,
+    req.body.irName,
+    req.body.irAddress,
+    req.body.product1,
+    req.body.product2,
+    req.body.product3,
+    req.body.product4
+  );
+  console.log(outputFiles);
+  req.send(outputFiles);
+}catch(err){
+  res.send(err);
+}
+});
+
+
+
 app.post("/getNames",requireAuth, async(req,res) =>{
   
   const docArray = await getUserNames();
@@ -316,8 +354,112 @@ app.get('/analyze',requireAuth, async function(req, res) {
   res.render('analyze',{page : 'analyze', userNames : docArray});
 });
 
+app.get('/utilities',requireAuth, function(req, res) {
+  
+  res.render('utilities',{page : 'utilities'});
+});
+
+function createLegalDocumentAndDeclaration(
+  prospectName,prospectAddress,irID,amt,amtWords,
+  bankAcc,bankName,irName,irAddress,
+  product1="",product2="",product3="",product4="",product5=""
+){
+
+  const inputPathDeclaration = path.resolve(__dirname,"./files/DECLARATION.docx");
+  const outputPathDeclaration = path.resolve(__dirname,"./public/legal/DECLARATION - "+ prospectName +".docx");
+
+  const inputPathLegal = path.resolve(__dirname,"./files/LEGAL.docx");
+  const outputPathLegal = path.resolve(__dirname,"./public/legal/LEGAL DOCUMENT - "+ prospectName +".docx");
+
+
+  //Declaration
+
+  //Load the docx file as binary content
+  const content = fs.readFileSync(
+    inputPathDeclaration,
+    "binary"
+  );
+  // Unzip the content of the file
+  const zip = new PizZip(content);
+  const doc = new Docxtemplater(zip, {
+    paragraphLoop: true,
+    linebreaks: true,
+  });
+ doc.render({
+  prospectName: prospectName,
+  prospectAddress: prospectAddress,
+  irID: irID,
+  amt: amt,
+  amtWords: amtWords,
+  bankAcc: bankAcc,
+  bankName: bankName,
+  irName: irName,
+  irAddress: irAddress,
+  product1: product1,
+  product2: product2,
+  product3: product3,
+  product4: product4,
+  product5: product5
+
+ });
+
+const buf = doc.getZip().generate({
+  type: "nodebuffer",
+  /*
+   * Compression: DEFLATE adds a compression step.
+   * For a 50MB document, expect 500ms additional CPU time.
+   */
+  compression: "DEFLATE",
+});
+
+// Write the Node.js Buffer to a file
+fs.writeFileSync(outputPathDeclaration, buf);
+
+
+// //Legal
+
+  // Load the docx file as binary content
+  const contentLegal = fs.readFileSync(
+    inputPathLegal,
+    "binary"
+  );
+  // Unzip the content of the file
+  const zipLegal = new PizZip(contentLegal);
+  const docLegal = new Docxtemplater(zipLegal, {
+    paragraphLoop: true,
+    linebreaks: true,
+  });
+  docLegal.render({
+    prospectName: prospectName,
+    prospectAddress: prospectAddress,
+    amt: amt,
+    amtWords: amtWords,
+    irName: irName,
+    irAddress: irAddress,
+ });
+
+const bufLegal = docLegal.getZip().generate({
+  type: "nodebuffer",
+  /*
+   * Compression: DEFLATE adds a compression step.
+   * For a 50MB document, expect 500ms additional CPU time.
+   */
+  compression: "DEFLATE",
+});
+
+// Write the Node.js Buffer to a file
+fs.writeFileSync(outputPathLegal, bufLegal);
+
+return [outputPathLegal,outputPathDeclaration];
+}
+
+
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get('*',requireAuth, function(req, res){
+  res.render('404',{page : '404'});
+});
+
+app.post('*',requireAuth, function(req, res){
   res.render('404',{page : '404'});
 });
 
