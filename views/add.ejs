@@ -29,7 +29,7 @@
       </div>
       <br>
       <div class="alert alert-success alert-dismissible fade" role="alert">
-        <strong>Holy guacamole!</strong> New person has been added.
+        <strong>Holy guacamole!</strong> New person <span id="newPersonName"></span> has been added.
         <button type="button" class="close" aria-label="Close" >
           <span aria-hidden="true">&times;</span>
         </button>
@@ -38,7 +38,20 @@
     </div>
 
     <div class="card container" style="overflow-y: scroll;">
-      <h5>Team Data</h5>
+      <div class="row">
+      <div class="col-sm-6">
+        <h5>Team Data</h5>
+      </div>
+      <div class="col-sm-6">
+        <div class="form-inline">
+          <input class="form-control mr-sm-2" type="search" id="search_text" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success my-2 my-sm-0" onclick="search()"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+        </div>
+      </div> 
+    </div>
+    <br>
+      
+      
       <table class="table table-dark">
         <thead>
           <tr>

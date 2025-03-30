@@ -1,3 +1,5 @@
+var userJson = {};
+
 function addPerson(){
     var nm = document.getElementById("addPersonNameTxt").value;
     const data = { name: nm};
@@ -6,8 +8,9 @@ function addPerson(){
     xhttp.setRequestHeader('Content-Type', 'application/json'); 
     xhttp.send(JSON.stringify(data));
     loadNames();
+    $("#newPersonName").html(nm);
     $('.alert').addClass("show");
-    setTimeout(function(){$('.alert').removeClass("show");},2000);
+    setTimeout(function(){$('.alert').removeClass("show");},3000);
 }
 
 $(".close").click(function(){
@@ -20,6 +23,8 @@ function loadNames(){
     xhttp.onload = function() {
 
         const response = JSON.parse(this.responseText);
+        userJson = response;
+
         $(".names").html("");
         for(let i = 0; i < response.length; i++){
             $(".names").append(`
@@ -103,5 +108,12 @@ function deleteUser(){
     location.href = "/delete?name=" + name;
 }
 
+function search(){
+    const searchStr = $("#search_text").val();
+
+    for(let i=0; i< userJson.length; i++){
+        
+    }
+}
 
 loadNames();

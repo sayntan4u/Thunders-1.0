@@ -111,21 +111,13 @@ app.post("/addUser",requireAuth, async (req,res)=>{
 
 //Method for updating data for Activity
 app.post("/updateUser",requireAuth, async (req,res)=>{
-  // console.log(req);
+
   try{
     const name = req.body.name;
     const week = req.body.week;
     const year = req.body.year;
     const fieldName = req.body.fieldName;
     const value = req.body.value;
-
-    // console.log(name);
-    // console.log(week);
-    // console.log(year);
-    // console.log(fieldName);
-    // console.log(value);
-
-    
 
     var userJson = '{"' + fieldName + '" : ' + value + '}';
     if(fieldName == "remarks"){
