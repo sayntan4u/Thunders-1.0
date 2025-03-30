@@ -25,31 +25,34 @@ function loadNames(){
         const response = JSON.parse(this.responseText);
         userJson = response;
 
-        $(".names").html("");
-        for(let i = 0; i < response.length; i++){
-            $(".names").append(`
-            <tr>
-            <th scope="row">${i + 1}</th>
-            <td>${response[i].name}</td>
-            <td class="namelist_container">
-            <a href="${response[i].namelist == "" ? "#" : response[i].namelist}" id="${response[i].name}-link" target="_blank" class=${response[i].namelist == "" ? "text-danger" : "text-success"}>${response[i].name}'s Namelist</a>
-            
-            <input class="form-control disp-hide" type="text" id="${response[i].name}-text"/> 
-            &nbsp;
-            <button id="${response[i].name}-btnCancel" class="btn btn-info btn-sm disp-hide" onclick="cancel_edit('${response[i].name}')"><i class="fa-solid fa-xmark"></i></button>
-            <button id="${response[i].name}-btn" class="btn btn-info btn-sm" onclick="show_editText('${response[i].name}')"><i class="fa-solid fa-pen"></i></button>
-            </td>
-            <td><button class="btn btn-danger" onclick="open_deleteUserModal('${response[i].name}')">Delete Person</button></td>
-          </tr>
-            `);
+        generateNamesTable(response);
 
-        $(".loading").addClass("hide");
         }
-///delete?name=${response[i]}
-       
-    }
     xhttp.setRequestHeader('Content-Type', 'application/json'); 
     xhttp.send();
+}
+
+function generateNamesTable(response){
+    $(".names").html("");
+    for(let i = 0; i < response.length; i++){
+        $(".names").append(`
+        <tr>
+        <th scope="row">${i + 1}</th>
+        <td>${response[i].name}</td>
+        <td class="namelist_container">
+        <a href="${response[i].namelist == "" ? "#" : response[i].namelist}" id="${response[i].name}-link" target="_blank" class=${response[i].namelist == "" ? "text-danger" : "text-success"}>${response[i].name}'s Namelist</a>
+        
+        <input class="form-control disp-hide" type="text" id="${response[i].name}-text"/> 
+        &nbsp;
+        <button id="${response[i].name}-btnCancel" class="btn btn-info btn-sm disp-hide" onclick="cancel_edit('${response[i].name}')"><i class="fa-solid fa-xmark"></i></button>
+        <button id="${response[i].name}-btn" class="btn btn-info btn-sm" onclick="show_editText('${response[i].name}')"><i class="fa-solid fa-pen"></i></button>
+        </td>
+        <td><button class="btn btn-danger" onclick="open_deleteUserModal('${response[i].name}')">Delete Person</button></td>
+      </tr>
+        `);
+
+    $(".loading").addClass("hide");
+}
 }
 
 function show_editText(name){
@@ -110,10 +113,18 @@ function deleteUser(){
 
 function search(){
     const searchStr = $("#search_text").val();
+    resultJson = [];
 
-    for(let i=0; i< userJson.length; i++){
-        
+    if(searchStr != ""){
+        for(let i=0; i< userJson.length; i++){
+            if(userJson[i].name.toLowerCase().match(searchStr.toLowerCase())){
+                resultJson.push(userJson[i]);
+            }
+        }
+    }else{
+        resultJson = userJson;
     }
+    generateNamesTable(resultJson);
 }
 
 loadNames();

@@ -39,13 +39,17 @@
 
     <div class="card container" style="overflow-y: scroll;">
       <div class="row">
-      <div class="col-sm-6">
-        <h5>Team Data</h5>
+      <div class="col-sm-9">
+        <h5 style="margin-top: 7px;">Team Data</h5>
       </div>
-      <div class="col-sm-6">
+      <div class="col-sm-3">
         <div class="form-inline">
-          <input class="form-control mr-sm-2" type="search" id="search_text" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" onclick="search()"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-magnifying-glass"></i></span>
+            </div>
+            <input type="search" class="form-control" placeholder="Search" id="search_text" aria-label="Search" onkeyup="search()">
+          </div>
         </div>
       </div> 
     </div>
