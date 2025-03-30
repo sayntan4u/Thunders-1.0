@@ -25,8 +25,13 @@ function loadNames(){
             $(".names").append(`
             <tr>
             <th scope="row">${i + 1}</th>
-            <td>${response[i]}</td>
-            <td><button class="btn btn-danger" onclick="open_deleteUserModal('${response[i]}')">Delete</button></td>
+            <td>${response[i].name}</td>
+            <td class="namelist_container">
+            <a href="${response[i].namelist}" id="${response[i].name}-link">Namelist</a>
+            <input class="form-control disp-hide" type="text" id="${response[i].name}-text"/> 
+            <button id="${response[i].name}-btn" class="btn btn-info btn-sm" onclick="show_editText('${response[i].name}')"><i class="fa-solid fa-pen"></i></button>
+            </td>
+            <td><button class="btn btn-danger" onclick="open_deleteUserModal('${response[i].name}')">Delete</button></td>
           </tr>
             `);
         }
@@ -35,6 +40,22 @@ function loadNames(){
     }
     xhttp.setRequestHeader('Content-Type', 'application/json'); 
     xhttp.send();
+}
+
+function show_editText(name){
+    if($("#" + name + "-btn").html() == '<i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>'){
+        //save
+        $("#" + name + "-text").removeClass("disp-show").addClass("disp-hide");
+        $("#" + name + "-link").removeClass("disp-hide").addClass("disp-show");
+        $("#" + name + "-btn").html('<i class="fa-solid fa-pen"></i>');
+    }else{
+        //edit
+        $("#" + name + "-text").val($("#" + name + "-link").attr("href"));
+        $("#" + name + "-link").removeClass("disp-show").addClass("disp-hide");
+        $("#" + name + "-text").removeClass("disp-hide").addClass("disp-show");
+        $("#" + name + "-btn").html('<i class="fa-solid fa-floppy-disk"></i>');
+    }
+    
 }
 
 function open_deleteUserModal(name){

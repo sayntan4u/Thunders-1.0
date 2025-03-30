@@ -13,3 +13,11 @@
 .hide{
     visibility: hidden;
 }
+
+.disp-hide{
+    display:none;
+}
+
+.disp-show{
+    display: inline-flex;
+}

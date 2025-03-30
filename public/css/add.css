@@ -2,3 +2,7 @@
     padding: 20px 30px !important;
     margin-top:20px !important;
 }
+
+.namelist_container input{
+    width:400px !important;
+}

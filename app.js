@@ -9,7 +9,13 @@ const Docxtemplater = require("docxtemplater");
 const PizZip = require("pizzip");
 const fs = require("fs");
 
-// const docxtopdf = require('docx-pdf');
+const tesseract = require("node-tesseract-ocr");
+
+const config = {
+  lang: "eng",
+  oem: 1,
+  psm: 3,
+}
 
 
 
@@ -72,6 +78,8 @@ const requireAuth = (req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public')));
 
 
+
+//Method for adding user for Add
 app.post("/addUser",requireAuth, async (req,res)=>{
   // console.log(req);
   try{
@@ -100,6 +108,7 @@ app.post("/addUser",requireAuth, async (req,res)=>{
     for(let i=1; i<=53; i++){
       db.collection("users").doc(name).collection(year.toString()).doc(i.toString()).set(userJson);
       db.collection("users").doc(name).collection((year + 1).toString()).doc(i.toString()).set(userJson);
+      db.collection("users").doc(name).set({namelist_link : ""});
     }
     // const response = db.collection("users").doc(name).collection("2025").doc(week).set(userJson);
     res.send("success");
@@ -108,6 +117,7 @@ app.post("/addUser",requireAuth, async (req,res)=>{
   }
 });
 
+//Method for updating data for Activity
 app.post("/updateUser",requireAuth, async (req,res)=>{
   // console.log(req);
   try{
@@ -143,6 +153,7 @@ app.post("/updateUser",requireAuth, async (req,res)=>{
   }
 });
 
+//Method for fetching data for Activity
 app.post("/getData",requireAuth, async (req,res) => {
   // console.log(req);
   try{
@@ -155,7 +166,7 @@ app.post("/getData",requireAuth, async (req,res) => {
   }
 });
 
-
+//Method for fetching data for Analyze
 app.post("/analyzeData",requireAuth, async (req,res) => {
   // console.log(req);
   try{
@@ -171,6 +182,7 @@ app.post("/analyzeData",requireAuth, async (req,res) => {
   }
 });
 
+//method for generating legal doc for Utilities
 app.post("/generateLegalDoc",requireAuth, async (req,res) => {
   try{
 
@@ -189,15 +201,14 @@ app.post("/generateLegalDoc",requireAuth, async (req,res) => {
     req.body.product3,
     req.body.product4
   );
-  console.log(outputFiles);
+  // console.log(outputFiles);
   req.send(outputFiles);
 }catch(err){
   res.send(err);
 }
 });
 
-
-
+//method for getting all the names of User fro ADD
 app.post("/getNames",requireAuth, async(req,res) =>{
   
   const docArray = await getUserNames();
@@ -205,6 +216,7 @@ app.post("/getNames",requireAuth, async(req,res) =>{
   res.send(docArray);
 });
 
+//Method for deleting user fopr ADD
 app.get("/delete",requireAuth, async (req,res) => {
   // console.log(req.query);
   // res.send(req.query.name);
@@ -279,7 +291,9 @@ async function getUserNames(){
   const docArray = [];
   for(let i =0; i < snapshot.length; i++)
     {
-      docArray.push(snapshot[i].id);
+      const namelist_link = await db.collection("users").doc(snapshot[i].id).get();
+      // console.log(namelist_link.data());
+      docArray.push({name : snapshot[i].id, namelist : namelist_link.data().namelist_link});
     }
   return docArray;
 }
@@ -307,57 +321,6 @@ async function getCollectionData(collection, year, week) {
 
   return docArray;
 }
-
-
-// sendFile will go here
-app.get('/',requireAuth, function(req, res) {
-  res.render('dashboard', {userName : req.session.userId, page : 'dash'});
-});
-
-app.get('/Login', function(req, res) {
-  res.render( 'login');
-});
-
-app.post('/Login', function(req, res) {
-
-  if (req.body.userID == "Sayantan" && req.body.pass == "123") {
-    req.session.userId = req.body.userID; // Set session identifier
-    res.redirect('/');
-    } else {
-      res.render( 'login');
-  }
-  
-});
-
-app.get('/logout',requireAuth, function(req,res){
-  req.session.destroy(function(err){
-    res.redirect('/');
-  });
-});
-
-app.get('/view',requireAuth, function(req, res) {
-  res.render('view', {page : 'view'});
-});
-
-app.get('/add',requireAuth, async function(req, res) {
-  res.render('add',{page : 'add'});
-});
-
-app.get('/profile',requireAuth, function(req, res) {
-  res.render('profile',{page : 'profile'});
-});
-
-app.get('/analyze',requireAuth, async function(req, res) {
-
-  const docArray = await getUserNames();
-
-  res.render('analyze',{page : 'analyze', userNames : docArray});
-});
-
-app.get('/utilities',requireAuth, function(req, res) {
-  
-  res.render('utilities',{page : 'utilities'});
-});
 
 function createLegalDocumentAndDeclaration(
   prospectName,prospectAddress,irID,amt,amtWords,
@@ -452,6 +415,60 @@ fs.writeFileSync(outputPathLegal, bufLegal);
 
 return [outputPathLegal,outputPathDeclaration];
 }
+
+
+// Routes will go here
+
+app.get('/',requireAuth, function(req, res) {
+  res.render('dashboard', {userName : req.session.userId, page : 'dash'});
+});
+
+app.get('/Login', function(req, res) {
+  res.render( 'login');
+});
+
+app.post('/Login', function(req, res) {
+
+  if (req.body.userID == "Sayantan" && req.body.pass == "123") {
+    req.session.userId = req.body.userID; // Set session identifier
+    res.redirect('/');
+    } else {
+      res.render( 'login');
+  }
+  
+});
+
+app.get('/logout',requireAuth, function(req,res){
+  req.session.destroy(function(err){
+    res.redirect('/');
+  });
+});
+
+app.get('/view',requireAuth, function(req, res) {
+  res.render('view', {page : 'view'});
+});
+
+app.get('/add',requireAuth, async function(req, res) {
+  res.render('add',{page : 'add'});
+});
+
+app.get('/profile',requireAuth, function(req, res) {
+  res.render('profile',{page : 'profile'});
+});
+
+app.get('/analyze',requireAuth, async function(req, res) {
+
+  const docArray = await getUserNames();
+
+  res.render('analyze',{page : 'analyze', userNames : docArray});
+});
+
+app.get('/utilities',requireAuth, function(req, res) {
+  
+  res.render('utilities',{page : 'utilities'});
+});
+
+
 
 
 //The 404 Route (ALWAYS Keep this as the last route)
