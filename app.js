@@ -9,14 +9,6 @@ const Docxtemplater = require("docxtemplater");
 const PizZip = require("pizzip");
 const fs = require("fs");
 
-const tesseract = require("node-tesseract-ocr");
-
-const config = {
-  lang: "eng",
-  oem: 1,
-  psm: 3,
-}
-
 
 
 const app = express();
@@ -230,6 +222,17 @@ app.get("/delete",requireAuth, async (req,res) => {
   res.redirect('/add');
 });
 
+app.post("/updateNamelist", requireAuth, async (req,res) => {
+  const name = req.body.name;
+  const link = req.body.link;
+
+  const namelistJson = {namelist_link : link};
+
+  db.collection("users").doc(name).set(namelistJson);
+
+  res.redirect("/add");
+});
+
 async function getAnalyzeData(collection, year, weekFrom, weekTo, name) {
 
   const snapshot = await db.collection(collection).doc(name.toString()).collection(year.toString()).listDocuments();
@@ -259,29 +262,6 @@ async function getAnalyzeData(collection, year, weekFrom, weekTo, name) {
 
       docArray.push(activity);
   }
-
-  // for(let i =1; i <= snapshot.length; i++)
-  // {
-  //   // console.log(parseInt(snapshot[i].id));
-  //   // docArray.push(parseInt(snapshot[i].id));
-
-  //   if(parseInt(snapshot[i-1].id)>= parseInt(weekFrom) && parseInt(snapshot[i-1].id) <= parseInt(weekTo)){
-      
-  //     const snap = await db.collection(collection).doc(name.toString()).collection(year.toString()).doc(snapshot[i-1].id.toString()).get();
-
-  //     const activity = new Activity(
-  //     sl,parseInt(snapshot[i-1].id), snap.data().list, snap.data().networkingDone, snap.data().networkingTarget, snap.data().infosDone, snap.data().infosTarget,
-  //     snap.data().reinfosDone, snap.data().reinfosTarget, snap.data().meetupsDone, snap.data().meetupsTarget,
-  //     snap.data().invisDone, snap.data().invisTarget, snap.data().plans, snap.data().pendingPlans, snap.data().remarks
-  //     );
-
-  //     sl++;
-
-  //     docArray.push(activity);
-  //   }
-  // }
-
-  // docArray.sort(function(a, b){return a - b});
 
   return docArray;
 }

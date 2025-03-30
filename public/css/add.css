@@ -6,3 +6,7 @@
 .namelist_container input{
     width:400px !important;
 }
+
+.blank_link{
+    color: red !important;
+}
