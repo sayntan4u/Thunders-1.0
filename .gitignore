@@ -8508,3 +8508,7 @@ node_modules/undefsafe/package.json
 node_modules/undefsafe/README.md
 node_modules/undefsafe/.github/workflows/release.yml
 node_modules/undefsafe/lib/undefsafe.js
+node_modules/.bin/nodemon.cmd
+node_modules/.bin/nodemon.ps1
+node_modules/.bin/nodetouch.cmd
+node_modules/.bin/nodetouch.ps1
